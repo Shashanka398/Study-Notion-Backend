@@ -1,7 +1,7 @@
 const mongoose=require("mongoose")
 
 const courseSchema=mongoose.Schema({
-    cousrseName:{
+    courseName:{
         type:String
     },
     courseDescription:{
