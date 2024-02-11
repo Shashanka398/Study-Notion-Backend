@@ -5,7 +5,7 @@ const User=require("../models/User")
 //auth
 exports.auth=async(req,res,next)=>{
     try{
-        const token=req.cookies.token || req.body.token | req.header("Authorisation".replace("Bearer ",""));
+        const token=req.cookies.token || req.body.token || req.header("Authorisation".replace("Bearer ",""));
         if(!token){
             return res.status(401).json({
                  success:false,
@@ -81,7 +81,7 @@ exports.isInstructor=async (req,res,next)=>{
 }
 
 //isAdmin
-exports.isInstructor=async (req,res,next)=>{
+exports.isAdmin=async (req,res,next)=>{
     try{
         if(req.user.accountType!=="Admin")
         {
