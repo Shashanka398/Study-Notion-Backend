@@ -5,7 +5,7 @@ const otpGenerator=require('otp-generator')
 const bcrypt=require("bcrypt");
 const jwt=require("jsonwebtoken");
 const { findOneAndUpdate } = require("../models/Tags");
-//sendOtp
+// sendOtp and check
 exports.sendOtp=async(req,res)=>{
     //fetch email from reuest body
     try{
