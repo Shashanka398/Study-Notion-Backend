@@ -195,6 +195,14 @@ exports.login=async(req,res)=>{
     }
 }
 //sendOtp
+exports.sendOtp=async(req,res)=>{
+    try{
+        
+
+    }catch(error){
+
+    }
+}
 //changePass
 exports.changePassword=async(req,res)=>{
     try{
