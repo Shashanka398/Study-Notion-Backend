@@ -3,7 +3,7 @@ const {instance}=require("../config/razorpay")
 const Course=require("../models/User")
 const User=require("../models/User")
 const mailSender=require("../utils/mailSender")
-const {courseEnrollmentEmail}= require("./mail/templates/courseEnrollmentEmail")
+const {courseEnrollmentEmail}= require("../mail/templates/courseEnrollmentEmail")
 
 
 //catpure payment and initate razorpay
@@ -89,12 +89,14 @@ exports.capturePayment=async(req,res)=>{
 
 //verify Signature of razorpay(Webhook)
 exports.verifySignature =async(req,res)=>{
+    //below code is razor behaviour
     const webhookSecret="12345678"
     const signature=req.headers["x-razorpay-signature"]
     //below 3 code will convert over webhooksecrect to signature to verify
     const shasum=crypto.createHmax("sha256",webhookSecret)//hashed based message auth code (SHA secure hashing alogorithm) 
     shasum.update(JSON.stringify(req.body)) //convert to string
     const digest=shasum.digest("hex")
+    //---------------------------///
 
     if(signature===digest){
         console.log("Payement is authorized")
