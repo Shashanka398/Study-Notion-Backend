@@ -1,4 +1,4 @@
-const Section = require("../models/Course")
+const Section = require("../models/Section")
 const Course = require("../models/Course")
 exports.createSection=async(req,res)=>{
 try{
@@ -13,17 +13,18 @@ try{
         });
 
     }
+
     //create section
     const newSection =await Section.create({sectionName});
     //update course with section Object Id
-    const updatedCourseDetails= await Course.findByIdAndUpdate(courseId,{$push:{courseContent:newSection._id}},{new:true}
-    )
+
+    const updatedCourseDetails= await Course.findByIdAndUpdate(courseId,{$push:{courseContent:newSection._id}},{new:true} ).populate('courseContent')
     //HW:use populte ti replace sectioons/subsection both in updatedcoursedetails
     //return response
     return res.status(200).json({
         success:true,
         message:'Section created successfully',
-        updatedCourseDetails
+        data:updatedCourseDetails
     })
 }
 catch(error){
@@ -72,8 +73,12 @@ exports.updateSection=async(req,res)=>{
 
 exports.deleteSection=async(req,res)=>{
     try{
-        const {sectionId}=req.body;
-        await Section.findByIdAndDelete(sectionId)
+        const {sectionId,courseId}=req.body;
+        const section=await Section.findByIdAndDelete(sectionId)
+        await Course.findByIdAndUpdate(
+            { _id: courseId }, 
+            { $pull: { courseContent: sectionId } } 
+        );
         return  res.status(200).json({
             success:true,
         message:'Section deleted  successfully',
@@ -86,7 +91,8 @@ exports.deleteSection=async(req,res)=>{
     catch(error){
         return res.status(400).json({
             success:false,
-            message:'Unable to delete section  '
+            message:'Unable to delete section  ',
+            error:error
         });
 
     }

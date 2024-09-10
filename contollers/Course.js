@@ -14,7 +14,6 @@ exports.createCourse = async (req, res) => {
       req.body;
     //get thumbnail
     const thumbnail = req.files.thumbnailImage;
-    console.log( req.files.thumbnailImage,"thumbnail")
     //validation
     if (
       !courseName ||
@@ -31,9 +30,7 @@ exports.createCourse = async (req, res) => {
     }
     //check for instructore
     const userId = req.user.id;
-    console.log(req.user,"---USER-ID---")
     const instructorDetails = await User.findById(userId);
-    console.log("--User Details",instructorDetails)
     //TODO:Verify that user id and instroctor  id is same
     if (!instructorDetails) {
       return res.status(400).json({
@@ -49,7 +46,6 @@ exports.createCourse = async (req, res) => {
         message: "Tag details is not found",
       });
     }
-    console.log(tagDetails,"tagDetails")
     //check if category is valid
      const categoryDetails = await Category.findById(category)
     if(!categoryDetails) {
@@ -69,7 +65,7 @@ exports.createCourse = async (req, res) => {
       courseDescription,
       instructor: instructorDetails.id,
       whatYouWillLearn: whatYouWillLearn,
-      tag: ['66df28cd34c756991a0de3cb'],
+      tag: tag,
       thumbnail: thumbnailImage.secure_url,
       category:categoryDetails._id
     });
@@ -219,5 +215,23 @@ exports.getCourseDetails=async(req,res)=>{
   }
 }
 
-exports.getEnrolledCourses=
+exports.getEnrolledCourses=async(req,res)=>{
+  try{
+    console.log(req.user.id,"User Id")
+    const userDetails= await User.findById(req.user.id).populate('courses')
+
+    return res.status(200).json({
+      success:true,
+      data:userDetails.courses
+    })
+
+
+
+  }catch(error){
+    return res.status(404).json({
+      success:false,
+      message:"User not found to get enrolled course"
+    })
+  }
+}
 

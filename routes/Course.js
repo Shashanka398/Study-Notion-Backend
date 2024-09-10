@@ -30,7 +30,7 @@ router.post("/deleteSubSection", auth, isInstructor, deleteSubSection)
 router.post("/addSubSection", auth, isInstructor, createSubSection)
 router.get("/getAllCourses", showAllCourses)                                               // Get all Registered Courses
 router.post("/getCourseDetails", getCourseDetails)    
-router.get("/getEnrolledCourses",getEnrolledCourses)                                    // Get Details for a Specific Courses
+router.get("/getEnrolledCourses",auth,getEnrolledCourses)                                    // Get Details for a Specific Courses
 
 // router.post("/getFullCourseDetails", auth, getFullCourseDetails)
 // router.post("/editCourse", auth, isInstructor, editCourse)                              // Edit Course routes
