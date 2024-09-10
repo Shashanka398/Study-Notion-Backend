@@ -7,13 +7,15 @@ const router = express.Router()
 //Route for :- updateCourseProgress
 
  
-const {createCourse,  getAllCourses,  getCourseDetails,  getFullCourseDetails, editCourse, getInstructorCourses,  deleteCourse,} = require("../contollers/Course")               // Course contollers Import
+const {createCourse,  showAllCourses,  getCourseDetails,  getFullCourseDetails, editCourse, getInstructorCourses,  deleteCourse,getEnrolledCourses} = require("../contollers/Course")               // Course contollers Import
 const {showAllCategories, createCategory, categoryPageDetails, } = require("../contollers/Category")      // Categories contollers Import
 const {createSection,  updateSection,  deleteSection, } = require("../contollers/Section")                // Sections contollers Import
 const {createSubSection, updateSubSection,  deleteSubSection, } = require("../contollers/Subsection")     // Sub-Sections contollers Import
 const {createRating,  getAverageRating, getAllRating, } = require("../contollers/RatingAndReview")        // Rating contollers Import
 const { auth, isInstructor, isStudent, isAdmin } = require("../middlewares/auth")                          // Importing Middlewares
 const {updateCourseProgress } = require("../contollers/CourseProgress");
+
+const {createTag} =require("../contollers/Tags")
 
 
 // ********************************************************************************************************
@@ -26,8 +28,9 @@ router.post("/deleteSection", auth, isInstructor, deleteSection)                
 router.post("/updateSubSection", auth, isInstructor, updateSubSection)                   // Edit Sub Section
 router.post("/deleteSubSection", auth, isInstructor, deleteSubSection)
 router.post("/addSubSection", auth, isInstructor, createSubSection)
-// router.get("/getAllCourses", getAllCourses)                                               // Get all Registered Courses
-router.post("/getCourseDetails", getCourseDetails)                                        // Get Details for a Specific Courses
+router.get("/getAllCourses", showAllCourses)                                               // Get all Registered Courses
+router.post("/getCourseDetails", getCourseDetails)    
+router.get("/getEnrolledCourses",getEnrolledCourses)                                    // Get Details for a Specific Courses
 
 // router.post("/getFullCourseDetails", auth, getFullCourseDetails)
 // router.post("/editCourse", auth, isInstructor, editCourse)                              // Edit Course routes
@@ -52,5 +55,10 @@ router.post("/createRating", auth, isStudent, createRating)
 router.get("/getAverageRating", getAverageRating)
 router.get("/getReviews", getAllRating)
 
+
+// ********************************************************************************************************
+//                                      Tags routes (Only by Admin)                                   *
+// ********************************************************************************************************
+router.post("/createTag", auth, isAdmin, createTag)
 
 module.exports = router

@@ -1,5 +1,6 @@
 const Profile=require("../models/Profile")
 const User= require("../models/User")
+const uploadImageToCloudinary=require('../utils/imageUploader')
 
 //explore->how to schedule datele after 5days automatically (crowjob)
 exports.updatedProfile=async(req,res)=>{
@@ -101,4 +102,66 @@ exports.getAllUserDetails=async(req,res)=>{
             message:error.message
         })
     }
+}
+
+
+//update 
+exports.updateBasicDetails=async(req,res)=>{
+try{
+    const {firstName,lastName,accountType}=req.body
+    const updates = {};
+    if (firstName !== undefined) updates.firstName = firstName;
+    if (lastName !== undefined) updates.lastName = lastName;
+    if (accountType !== undefined) updates.accountType = accountType;
+    const updatedData=await User.findByIdAndUpdate({_id:req.body.id},updates,{new:true})
+
+    return res.status(200).json({
+        message:"Updated basic details successfully",
+        success:true,
+        data:updatedData
+    })
+
+
+}catch(error){
+    res.status(500).json({
+        success:false,
+        message:error.message
+    })
+}
+}
+
+
+exports.updateDisplayPicture=async(req,res)=>{
+try{
+     const userDetails=await User.findById(req.body.id).populate('additionalDetails').exec()
+     const additionalDetailsId=userDetails.additionalDetails.id
+     const profileImage=req.files.profileImage
+     const image = await uploadImageToCloudinary(
+        profileImage,
+        process.env.FOLDER_NAME,
+        1000,
+        1000
+      );
+      const update={}
+      console.log(image,"images url")
+      update.profilePic=image.url
+
+      const updatedDetails=await Profile.findByIdAndUpdate(additionalDetailsId,update,{new:true})
+      return res.status(200).json({
+        success:true,
+        message:"Successfully updated Image",
+        data:updatedDetails
+      })
+
+}catch(error){
+    res.status(404).json({
+        success:false,
+        message:error.message
+    })
+}
+}
+
+
+exports.getEnrolledCourses=async(req,res)=>{
+    
 }

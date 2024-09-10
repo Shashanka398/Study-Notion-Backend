@@ -1,7 +1,7 @@
 const Tags=require(".././models/Tags")
 
 //create tag
-exports.createTage=async(req,res)=>{
+exports.createTag=async(req,res)=>{
     try{
         const {name,description}=req.body;
         if(!name || !description){
@@ -12,7 +12,7 @@ exports.createTage=async(req,res)=>{
         }
 
         //create entry in DB
-        const tagDetails= await Tag.create({
+        const tagDetails= await Tags.create({
             name:name,
             descriptiom:description
         })
@@ -37,7 +37,7 @@ exports.createTage=async(req,res)=>{
 
 exports.showAllTages=async(req,res)=>{
     try{
-        const allTags=await Tag.find({},{name:true,descriptiom:true});
+        const allTags=await Tags.find({},{name:true,descriptiom:true});
         res.status(200).json({
             success:true,
             messages:"All tags returned successfully!!",

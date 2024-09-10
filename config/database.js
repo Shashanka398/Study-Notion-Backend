@@ -2,7 +2,7 @@ const mongoose=require("mongoose");
 require("dotenv").config();
 exports.connect=()=>{
     mongoose.connect(process.env.MONGOOSE_URL,{
-        userNewUrlParser:true,
+        useNewUrlParser: true, // Correct option name
         useUnifiedTopology:true
     })
     .then(()=>console.log("DB connected successfully"))

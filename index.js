@@ -32,7 +32,7 @@ app.use(
 )
 //cloudinary connection
 cloudinaryConnect();
-
+console.log("Entered routes")
 //routes
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
