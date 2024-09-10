@@ -11,6 +11,18 @@ const userSchema=new mongoose.Schema({
         required:true,
         trim:true
     },
+    email:{
+        type:String,
+        required:true,
+        validate: {
+            validator: function(value) {
+                // Basic email validation regex
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            },
+            message: props => `${props.value} is not a valid email address!`
+        }
+
+    },
     password:{
         type:String,
         required:true,
@@ -45,8 +57,8 @@ const userSchema=new mongoose.Schema({
             type:mongoose.Schema.ObjectId,
             ref:"CourseProgress"
         }
-    ]
-
-})
+    ] 
+},
+)
 
 module.exports=mongoose.model("User",userSchema)

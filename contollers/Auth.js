@@ -3,8 +3,15 @@ const Otp=require("../models/Otp")
 const Profile=require("../models/Profile")
 const otpGenerator=require('otp-generator')
 const bcrypt=require("bcrypt");
+const nodemailer=require("nodemailer")
 const jwt=require("jsonwebtoken");
 const { findOneAndUpdate } = require("../models/Tags");
+const { auth } = require("../middlewares/auth");
+const otpTemplate=require("../mail/templates/emailVerificationTemplate");
+const { use } = require("../routes/Course");
+const mailSender = require("../utils/mailSender");
+const {passwordUpdated}=require('../mail/templates/passwordUpdate')
+require("dotenv").config();
 // sendOtp and check
 exports.sendOtp=async(req,res)=>{
     //fetch email from reuest body
@@ -39,7 +46,7 @@ exports.sendOtp=async(req,res)=>{
         const otpBody=await Otp.create(otpPayload);
         console.log(otpBody)
 
-        return req.status(200).json({
+        return res.status(200).json({
             success:true,
             message:'Otp sent successfully!!',
             otp
@@ -47,8 +54,8 @@ exports.sendOtp=async(req,res)=>{
     }
     catch(error){
         console.log(error);
-        return req.status(500).json({
-            success:fasle,
+        return res.status(500).json({
+            success:false,
             message:error.message,
             otp
         })
@@ -61,6 +68,7 @@ exports.sendOtp=async(req,res)=>{
 //signUp
 exports.signUp=async (req,res)=>{
     try{
+        debugger
           //data fetch  from req doby
         const {firstName,lastName,email,password,confirmPassword,accountType,contactNumber,otp}=req.body;
         //validate email
@@ -94,7 +102,8 @@ exports.signUp=async (req,res)=>{
                 success:false,
                 message:'Otp not found'
             })
-        }else if(otp!==recentOtp){
+        }else if(otp!==recentOtp[0].otp){
+            console.log(recentOtp[0].otp,otp,"Console")
             //validate otp
             return res.status(400).json({
                 success:false,
@@ -143,13 +152,17 @@ exports.login=async(req,res)=>{
         //get data from request body
         const {email,password}=req.body;
         //validate data
-        if(!emailExist || !password){
+        debugger
+    
+        if(!email || !password){
             return res.status(403).json({
                 success:false,
                 message:"All fields should be filled "
             })
         }
-        const user=await User.findOne({email}).populate("additionalDetails");
+       
+
+        const user=await User.findOne({email});
         if(!user){
             return res.status(401).json({
                 success:false,
@@ -157,10 +170,11 @@ exports.login=async(req,res)=>{
             })
 
         }
+   
         if(await bcrypt.compare(password,user.password)){
             const payload={
                 email:user.email,
-                id:user_id,
+                id:user.id,
                 accountType:user.accountType
             }
             const token=jwt.sign(payload,process.env.JWT_SECRET,{
@@ -171,11 +185,16 @@ exports.login=async(req,res)=>{
             const options={
                 expires:new Date(Date.now()+ 3*2*60*60*1000)
             }
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: user.id }, // Use _id to find the user
+                { $set: { token: token } }, // Update the token field
+                { new: true, runValidators: true } // Return the updated user and validate
+            )
 
             res.cookie("token",token,options).status(200).json({
                 success:true,
                 token,
-                user,
+                updatedUser,
                 message:"Logged In"
             })
         }
@@ -194,27 +213,21 @@ exports.login=async(req,res)=>{
 
     }
 }
-//sendOtp
-exports.sendOtp=async(req,res)=>{
-    try{
-        
-
-    }catch(error){
-
-    }
-}
 //changePass
 exports.changePassword=async(req,res)=>{
     try{
     //get data from req body
-    const userDetails=await User.findById(req.user.id)
+    const userDetails=await User.findById(req.body.id)
+
     //get oldPass,newPass,confirmPass
     const { oldPassword,newPassword,confirmPassword}=req.body;
     //validation of old password
+
     const isPasswordMatch=await bcrypt.compare(
         oldPassword,userDetails.password
     )
 
+    console.log(isPasswordMatch)
     if(!isPasswordMatch){
         //If old password does'nt match return 401 unauthorised
         return res.status(401).json({
@@ -232,8 +245,9 @@ exports.changePassword=async(req,res)=>{
 
     //update pwd in db
     const encryptedPassword= await bcrypt.hash(newPassword,10)
-    const updatedUserDetails=await findOneAndUpdate(
-        req.user.id,
+    console.log(encryptedPassword)
+    const updatedUserDetails=await User.findOneAndUpdate(
+        {_id:req.body.id},
         {password:encryptedPassword},
         {new:true}
     )
@@ -241,6 +255,7 @@ exports.changePassword=async(req,res)=>{
     try {
         const emailResponse = await mailSender(
             updatedUserDetails.email,
+            'Update passwaord in code help',
             passwordUpdated(
                 updatedUserDetails.email,
                 `Password updated successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`

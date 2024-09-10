@@ -14,7 +14,7 @@ exports.auth=async(req,res,next)=>{
         }
         try{
             const decode= jwt.verify(token,process.env.JWT_SECRET);
-            console.log(decode);
+            console.log(decode,"decode");
             req.user=decode;
 
         }
@@ -61,6 +61,7 @@ exports.isStudent=async (req,res,next)=>{
 //isInstructor
 exports.isInstructor=async (req,res,next)=>{
     try{
+        console.log(req.user.accountType,"Accont Type")
         if(req.user.accountType!=="Instructor")
         {
             return res.status(401).json({

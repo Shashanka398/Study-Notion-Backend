@@ -14,6 +14,10 @@ const profileSchema=new mongoose.Schema({
     contactNumber:{
         type:Number,
         trim:true
+    },
+    profilePic:{
+        type:String,
+        default: ''
     }
 
 })

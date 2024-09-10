@@ -56,6 +56,7 @@ exports.resetPassword = async (req,res)=>{
 
         }
         //get user details using token
+        debugger
         const userDetails=await User.findOne({token:token})
          //if no entry-invalid token
         if(!userDetails){

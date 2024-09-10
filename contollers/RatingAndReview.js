@@ -80,7 +80,7 @@ exports.getAverageRating=async (req,res)=>{
             }
         ]
        )  
-       if(result.legth>0){
+       if(result.length>0){
         return res.status(200).json({
             success:true,
             averageRating:result[0].averageRating
@@ -103,7 +103,18 @@ exports.getAverageRating=async (req,res)=>{
 exports.getAllRating=async(req,res)=>{
     try{
 
+        const allReview= await RatingAndReview.find({}).sort({ratng:"desc"}).populate({path:"user",select:"firstName lastName email image"}).populate({path:"course",select:"course"}).exec()
+       return res.status(200).json({
+        success:true,
+        message:"All rating fetched successfully",
+        data:allReview
+       })
+
     }catch(err){
-        
+        return res.status(500).json({
+            success:false,
+            message:er.message,
+        })
+
     }
 }
