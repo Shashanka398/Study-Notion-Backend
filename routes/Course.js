@@ -18,14 +18,12 @@ const {updateCourseProgress } = require("../contollers/CourseProgress");
 const {createTag} =require("../contollers/Tags")
 
 
-// ********************************************************************************************************
-//                                      Course routes (only by Instructors)                               *
-// ********************************************************************************************************
-router.post("/createCourse", auth, isInstructor, createCourse)                            // Courses can Only be Created by Instructors
-router.post("/addSection", auth, isInstructor, createSection)                            //Add a Section to a Course
-router.post("/updateSection", auth, isInstructor, updateSection)                         // Update a Section
-router.post("/deleteSection", auth, isInstructor, deleteSection)                         // Delete a Section
-router.post("/updateSubSection", auth, isInstructor, updateSubSection)                   // Edit Sub Section
+
+router.post("/createCourse", auth, isInstructor, createCourse)                            
+router.post("/addSection", auth, isInstructor, createSection)
+router.post("/updateSection", auth, isInstructor, updateSection)                         
+router.post("/deleteSection", auth, isInstructor, deleteSection)                         
+router.post("/updateSubSection", auth, isInstructor, updateSubSection)                 
 router.post("/deleteSubSection", auth, isInstructor, deleteSubSection)
 router.post("/addSubSection", auth, isInstructor, createSubSection)
 router.get("/getAllCourses", showAllCourses)                                               // Get all Registered Courses
@@ -37,7 +35,6 @@ router.get("/getEnrolledCourses",auth,getEnrolledCourses)                       
 // router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses)           // Get all Courses Under a Specific Instructor
 // router.delete("/deleteCourse", deleteCourse)                                            // Delete a Course
 router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
-
 
 
 
