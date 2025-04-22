@@ -3,7 +3,6 @@ const Otp=require("../models/Otp")
 const Profile=require("../models/Profile")
 const otpGenerator=require('otp-generator')
 const bcrypt=require("bcrypt");
-const nodemailer=require("nodemailer")
 const jwt=require("jsonwebtoken");
 const { findOneAndUpdate } = require("../models/Tags");
 const { auth } = require("../middlewares/auth");
@@ -30,8 +29,6 @@ exports.sendOtp=async(req,res)=>{
             lowerCaseAlphabets:false,
             specialChars:false
         });
-        console.log("Otp is:",otp);
-        //check uniwque otp or not
         const result =await Otp.findOne({otp:otp});
         while(result){
             otp=otpGenerator(6,{
@@ -42,7 +39,6 @@ exports.sendOtp=async(req,res)=>{
             result=await Otp.findOne({otp:otp});
         }
         const otpPayload={email,otp};
-        //create an entry in db before otp
         const otpBody=await Otp.create(otpPayload);
         console.log(otpBody)
 
@@ -65,7 +61,6 @@ exports.sendOtp=async(req,res)=>{
 
 }
 
-//signUp
 exports.signUp=async (req,res)=>{
     try{
         debugger
@@ -78,7 +73,7 @@ exports.signUp=async (req,res)=>{
                 message:"All fields are required !!"
             })
         }
-        //match 2 passward
+
         if(password!==confirmPassword){
             return res.status(400).json({
                 success:false,

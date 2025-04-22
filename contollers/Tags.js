@@ -10,8 +10,6 @@ exports.createTag=async(req,res)=>{
                 message:'All field required'
             })
         }
-
-        //create entry in DB
         const tagDetails= await Tags.create({
             name:name,
             descriptiom:description
@@ -33,7 +31,6 @@ exports.createTag=async(req,res)=>{
 }
 
 
-//getAll tags
 
 exports.showAllTages=async(req,res)=>{
     try{
@@ -47,7 +44,7 @@ exports.showAllTages=async(req,res)=>{
     }catch(err){
         return res.status(500).json({
             success:false,
-            message:error.message
+            message:err.message
         })
 
     }

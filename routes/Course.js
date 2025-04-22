@@ -8,11 +8,11 @@ const router = express.Router()
 
  
 const {createCourse,  showAllCourses,  getCourseDetails,  getFullCourseDetails, editCourse, getInstructorCourses,  deleteCourse,getEnrolledCourses} = require("../contollers/Course")               // Course contollers Import
-const {showAllCategories, createCategory, categoryPageDetails, } = require("../contollers/Category")      // Categories contollers Import
-const {createSection,  updateSection,  deleteSection, } = require("../contollers/Section")                // Sections contollers Import
-const {createSubSection, updateSubSection,  deleteSubSection, } = require("../contollers/Subsection")     // Sub-Sections contollers Import
-const {createRating,  getAverageRating, getAllRating, } = require("../contollers/RatingAndReview")        // Rating contollers Import
-const { auth, isInstructor, isStudent, isAdmin } = require("../middlewares/auth")                          // Importing Middlewares
+const {showAllCategories, createCategory, categoryPageDetails, } = require("../contollers/Category")      
+const {createSection,  updateSection,  deleteSection, } = require("../contollers/Section")               
+const {createSubSection, updateSubSection,  deleteSubSection, } = require("../contollers/Subsection")     
+const {createRating,  getAverageRating, getAllRating, } = require("../contollers/RatingAndReview")      
+const { auth, isInstructor, isStudent, isAdmin } = require("../middlewares/auth")                          
 const {updateCourseProgress } = require("../contollers/CourseProgress");
 
 const {createTag} =require("../contollers/Tags")
@@ -40,25 +40,15 @@ router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
 
 
 
-// ********************************************************************************************************
-//                                      Category routes (Only by Admin)                                   *
-// ********************************************************************************************************
+
 router.post("/createCategory", auth, isAdmin, createCategory)
 router.get("/showAllCategories", showAllCategories)
 router.post("/getCategoryPageDetails", categoryPageDetails)
 
-
-// ********************************************************************************************************
-//                                      Rating and Review (only by Student)                               *
-// ********************************************************************************************************
 router.post("/createRating", auth, isStudent, createRating)
 router.get("/getAverageRating", getAverageRating)
 router.get("/getReviews", getAllRating)
 
-
-// ********************************************************************************************************
-//                                      Tags routes (Only by Admin)                                   *
-// ********************************************************************************************************
 router.post("/createTag", auth, isAdmin, createTag)
 
 module.exports = router

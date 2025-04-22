@@ -9,7 +9,7 @@ exports.resetPasswordToken=async(req,res)=>{
         //check user for email,email verification
         const user=await User.findOne({email:email})
         if(!user){
-            return res.json({succcess :fasle,message:"Email not registred"})
+            return res.json({succcess :false,message:"Email not registred"})
         }
         
         //genreate token
@@ -83,7 +83,6 @@ exports.resetPassword = async (req,res)=>{
         })
 
     }catch(err){
-        console.error(error)
         return res.status(401).json({
             success:false,
             message:"Error while creating password"

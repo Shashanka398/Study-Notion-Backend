@@ -7,11 +7,8 @@ const { uploadImageToCloudinary } = require("../utils/imageUploader")
 //create SubSection
 exports.createSubSection=async(req,res)=>{
     try{
-        //data fetch 
         const {sectionId,title,description}=req.body
-        //extract file/video
         const video=req.files.videoFile
-        //validation
         if(!sectionId || !title  || !description || !video){
 
             return res.staus(500).json({
@@ -19,16 +16,15 @@ exports.createSubSection=async(req,res)=>{
                 message:'All fields are required'
             })
         }
-        //upload video to cloudinary
         const uploadDetails= await uploadImageToCloudinary(video,process.env.FOLDER_NAME)
-        //create sub section
+
         const SubSectionDetails=await SubSection.create({
             title:title,
-            timeDuration:timeDuration,
+            timeDuration:uploadDetails.timeDuration,
             description:description,
             videoUrl:uploadDetails.secure_url
         })
-        //update to section with sub section id
+
         const updatedSubSection= await Section.findByIdAndUpdate({ _id:sectionId},
             {$push:{
                     subSection:SubSectionDetails._id
@@ -88,7 +84,7 @@ exports.updateSubSection=async(req,res)=>{
     }catch(error){
         return res.status(404).json({
             success:false,
-            message:`Error while updating subsection of ${title} `,
+            message:`Error while updating subsection of ${req.body.title} `,
             error:error
         })
     }
