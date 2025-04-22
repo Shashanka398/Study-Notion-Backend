@@ -68,7 +68,7 @@ exports.sendOtp=async(req,res)=>{
 //signUp
 exports.signUp=async (req,res)=>{
     try{
-        debugger
+  
           //data fetch  from req doby
         const {firstName,lastName,email,password,confirmPassword,accountType,contactNumber,otp}=req.body;
         //validate email
@@ -96,8 +96,7 @@ exports.signUp=async (req,res)=>{
         }
         //find recent otp for the user
         const recentOtp=await Otp.find({email}).sort({createdAt:-1}).limit(1);//sort all otps according to lastest and get recent otp
-        console.log("Recent otp",recentOtp);
-        if(recentOtp.length==0){
+        if(recentOtp.length===0){
             return res.status(400).json({
                 success:false,
                 message:'Otp not found'
